@@ -7,6 +7,7 @@ import com.muhardin.endy.belajar.spring.security.multiauth.dao.TransaksiDao;
 import com.muhardin.endy.belajar.spring.security.multiauth.entity.Pengguna;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,8 +24,10 @@ public class TransaksiController {
     private ObjectMapper objectMapper;
 
     @GetMapping("/transaksi/list")
-    public ModelMap dataTransaksi() {
-        Pengguna pengguna = penggunaDao.findByUsername("user001");
-        return new ModelMap().addAttribute("dataTransaksi",transaksiDao.findByPengguna(pengguna));
+    public ModelMap dataTransaksi(Authentication authentication) throws Exception {
+        log.info("Authentication : {}", objectMapper.writeValueAsString(authentication));
+        Pengguna pengguna = penggunaDao.findByUsername(authentication.getName());
+        return new ModelMap().addAttribute("dataTransaksi",
+                transaksiDao.findByPengguna(pengguna));
     }
 }
