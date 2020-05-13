@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Daftar Transaksi</title>
+</head>
+<body>
+    <h1>Daftar Transaksi</h1>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Waktu Transaksi</th>
+            <th>Keterangan</th>
+            <th>Pengguna</th>
+            <th>Nilai</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="t : ${dataTransaksi}">
+            <td th:text="${t.waktuTransaksi}">Rabu 13 Mei 2020 09:16:00</td>
+            <td th:text="${t.keterangan}">Saldo Awal</td>
+            <td th:text="${t.pengguna.nama}">user001</td>
+            <td th:text="${t.nilai}">100000</td>
+        </tr>
+        </tbody>
+    </table>
+</body>
+</html>
