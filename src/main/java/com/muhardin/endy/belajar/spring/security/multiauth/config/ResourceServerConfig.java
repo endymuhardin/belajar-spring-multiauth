@@ -13,7 +13,8 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
         http.antMatcher("/api/**")
                 .authorizeRequests(authorizeRequests ->
                         authorizeRequests
-                                .anyRequest().authenticated()
-                ).oauth2ResourceServer(OAuth2ResourceServerConfigurer::opaqueToken);
+                                .anyRequest().authenticated())
+                //.oauth2ResourceServer(OAuth2ResourceServerConfigurer::opaqueToken);
+                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
     }
 }

@@ -8,6 +8,7 @@ import com.muhardin.endy.belajar.spring.security.multiauth.entity.Transaksi;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,13 +27,18 @@ public class TransaksiApiController {
     @GetMapping("/transaksi/")
     public Iterable<Transaksi> dataTransaksi(Authentication currentUser) throws Exception {
         log.info("Current user : {}", objectMapper.writeValueAsString(currentUser));
+        log.info("Principal type : {}", currentUser.getPrincipal().getClass().getName());
 
-        if (!OAuth2AuthenticatedPrincipal.class.isAssignableFrom(currentUser.getPrincipal().getClass())) {
-            throw new IllegalStateException("Current Principal is not OAuth2 principal : " + currentUser.getPrincipal().getClass().getName());
+        String username;
+        if (OAuth2AuthenticatedPrincipal.class.isAssignableFrom(currentUser.getPrincipal().getClass())) {
+            username = ((OAuth2AuthenticatedPrincipal) currentUser.getPrincipal())
+                    .getAttribute("user_name");
+        } else if (Jwt.class.isAssignableFrom(currentUser.getPrincipal().getClass())) {
+            username = ((Jwt) currentUser.getPrincipal()).getClaim("user_name");
+        } else {
+            throw new IllegalStateException("Cannot get username");
         }
 
-        String username = ((OAuth2AuthenticatedPrincipal) currentUser.getPrincipal())
-                .getAttribute("user_name");
         log.info("Username : {}", username);
         Pengguna pengguna = penggunaDao.findByUsername(username);
         return transaksiDao.findByPengguna(pengguna);
