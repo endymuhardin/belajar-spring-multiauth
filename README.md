@@ -13,7 +13,6 @@ Dengan demikian, kita harus menyediakan beberapa proteksi security, yaitu:
 
 1. Daftar transaksi user (web-based) : [http://localhost:8080/transaksi/list](http://localhost:8080/transaksi/list). Untuk mengakses halaman ini, harus login dulu. 
 2. API data transaksi user (REST) : [http://localhost:8080/api/transaksi/](http://localhost:8080/api/transaksi/). Untuk mengakses halaman ini, harus menggunakan Bearer Token.
-3. 
 
 ## Daftar credential untuk mengakses aplikasi ##
 
@@ -24,9 +23,7 @@ Dengan demikian, kita harus menyediakan beberapa proteksi security, yaitu:
 
 2. Client Apps
 
-    * Client ID : `clientwebbased`, client secret : `abcd`, grant type : `authorization_code,refresh_token`
-    * Client ID : `clientspamobile`, client secret : `abcd`, grant type : `implicit`
-    * Client ID : `mobileapp`, client secret : `abcd`, grant type : `password,refresh_token`
+    * Client ID : `spa-client`, client secret : `abcd`, grant type : `authorization_code,refresh_token`
 
 ## Mendapatkan Access Token dengan Grant Type Authorization Code PKCE ##
 
@@ -42,7 +39,7 @@ curl -X POST \
   --header 'Content-Type: application/x-www-form-urlencoded' \
   --data-urlencode 'client_id=spa-client' \
   --data-urlencode 'redirect_uri=http://127.0.0.1:10000/authorized' \
-  --data-urlencode 'grant_type=authorization_code' \
+  --data-urlencode 'grant_type=authorization_code,refresh_token' \
   --data-urlencode 'code=s2QnpXbI7y2TB89HKK_s52Vm9d0r_XYd_OCPr7_sqvq4i0zApwDSK8g44JZaWoZjUiOAowaXHwknBah133cVmF9ng5noqibE45lAFo3ruKYTwxiDr32K81jzB6z3JyRr' \
   --data-urlencode 'code_verifier=EmJ1jTS245HXMu5dDFc36XlEK02FCfT3BAvbvVfBiXSl'
 ```
@@ -51,12 +48,12 @@ Login yang sukses akan menghasilkan response seperti ini
     
 ```json
 {
-  "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiYmVsYWphciJdLCJ1c2VyX25hbWUiOiJ1c2VyMDAxIiwic2NvcGUiOlsicmVhZCIsIndyaXRlIiwiYWRtaW4iXSwiZXhwIjoxNTg5Mzg1OTIyLCJhdXRob3JpdGllcyI6WyJWSUVXX1RSQU5TQUtTSSJdLCJqdGkiOiIzZDY2MzU0ZS02NGM1LTQxZTItYTc5MC00YWI4MjFiYWVhNWIiLCJjbGllbnRfaWQiOiJtb2JpbGVhcHAifQ.WWVOD9ivEf1nRZgSZ3uIWQBrTGfgsufgG28ZOLWQwW2h8wV_4z3JdJp87lsAkSoNYXD1xko1dwjSe0tz1Uw5ex9u12o4uwECn0ofkzZGi3q7jDd6pD3ypHBCyr1J-kbNF4EWIUVvefz2LElN96AbMtuHUChJmEFAJND2rljMDXZTm1cz-nnXcVkXumqXjDuRWYOFTZgQ4jhE-DrxU2cvIq87CqBVO12zGeGsOOHXi6j9OKhVUVCbxRymU1e8WLFPxEj_f7Fn_EynEksrask2GTw7GghFL5WGalHI_3lGOp9PgA7dJnd1pKWFxZspQj78EqwO8cZTAETZLeBtcL5mFg",
-  "token_type": "bearer",
-  "refresh_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiYmVsYWphciJdLCJ1c2VyX25hbWUiOiJ1c2VyMDAxIiwic2NvcGUiOlsicmVhZCIsIndyaXRlIiwiYWRtaW4iXSwiYXRpIjoiM2Q2NjM1NGUtNjRjNS00MWUyLWE3OTAtNGFiODIxYmFlYTViIiwiZXhwIjoxNTkxOTM0NzIyLCJhdXRob3JpdGllcyI6WyJWSUVXX1RSQU5TQUtTSSJdLCJqdGkiOiI3ODFiNmY3ZC1iM2JhLTQyNTItODI5Ny05MTUwOGRlNWM2YmUiLCJjbGllbnRfaWQiOiJtb2JpbGVhcHAifQ.YAX3vRbGdiHM0HcG9itISGJ1XxmEmzUJsYh5-BIuBfVoYTu28F0f6JN3qGvfmPr2hZzAjhG8wQthwgtwmQXbpLTeWNIVW_v9EAme3feUy83h1Kd8kChg-837H5VfdSHOUulG6QuK_Yp9kD_6UjIASvaHvJsQXtnJy-gcBqofZpth67KGmWihOaHiiYdWoFgEN495tK2FrnERMz0JGDT79lzZUlK2gWcN9_-rcS8wBKPK2zpPm0F25k9mgEtEXznsjwRv12CCdMakNEvOYoUjkgrjq0A7FSWG7JASb2GZjggDRpXTSYd0tzWrGGvm67o-N78myQhKu7VXY5qeZup3fA",
-  "expires_in": 43199,
-  "scope": "read write admin",
-  "jti": "3d66354e-64c5-41e2-a790-4ab821baea5b"
+  "access_token": "eyJraWQiOiJmOGM3M2VmMS0yODE4LTRhODEtOTIyOC1kM2EwYjYyNzRjMjQiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ1c2VyMDAyIiwiYXVkIjoic3BhLWNsaWVudCIsIm5iZiI6MTY3ODQ1Mjg4MCwic2NvcGUiOlsib3BlbmlkIl0sImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MCIsImV4cCI6MTY3ODQ1MzE4MCwiaWF0IjoxNjc4NDUyODgwfQ.deMwZjdVzVdwyTqyFBCJG6Mwm4WttXAIWvfQYtrq7bKtUzmH0GBuQ3kzGt-_KlhXyxWO9p1YbC0f0nQJsjtOGRcoQj1BNvzoC_pgCYGq-1Vj5DSY1uS6DiEazFJ4TRJS85sfx4BH6fqAgGUo2EgBnbbpyCA9Y-HKUS9bdlj6v90IBpch6_pmWLMKXbS_7Tic8qbihAikiDu1Z5VmposQpC4N6DXBinuKsm7Khk6TOo862BSx97UKd9CdxrOXTZZfgk2GuI09kyVmzkK7M7x4y7_OL_HMDoQA5fTLw6iI6XLzSc04ud9UKaJnkfpXv40BcXmSPxBCCv_AtDR6SupiRQ",
+  "refresh_token": "ougihdJcs9mtHOW5XEeYYhZNLiSep7xpQhu8bNuPA50XYpMZuUyIPceQKhxLM4plVddcgeM_n4o0n6ikixAYmgR1ToTzVFSMwB7C59YqcsC0_YS4p9xP8hep-39R3Idj",
+  "scope": "openid",
+  "id_token": "eyJraWQiOiJmOGM3M2VmMS0yODE4LTRhODEtOTIyOC1kM2EwYjYyNzRjMjQiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ1c2VyMDAyIiwiYXVkIjoic3BhLWNsaWVudCIsImF6cCI6InNwYS1jbGllbnQiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAiLCJleHAiOjE2Nzg0NTQ2ODAsImlhdCI6MTY3ODQ1Mjg4MH0.Cyn3_pZKVY-BKMGqcO_lY_GsMYYGK-XkEZE5YLSFF1vZKafQ1IMP8wVio3IE2Y-zsY7RfT0VDCD-QfyuhJb_DTdqWoPUosLCheP29s3GezBKK3J2pDX1mxSTAfdjCACYt9WdoLuHQVJatW6_ZHpe6JOxbpBFuGeOaKRSEYvyhtkYd9-Ld0hag_E7XfgQO3zK7AnDcK4a1I68g60uyN_WoeR8SUZwqmpmiFVw4QXDiAlz7NFO1Rngjn_Et37SzzNwYSMNS3Rq_d_fm2yVL4tfP_3JN85pQrIr6UBptxvJqCtZNYx7PGzQdM0b3JxDRjs0H4hHFFs13tkLIoPlWTuK4A",
+  "token_type": "Bearer",
+  "expires_in": 299
 }
 ```
 
@@ -65,9 +62,10 @@ Login yang sukses akan menghasilkan response seperti ini
 Data transaksi `user001` dapat diakses dengan HTTP request seperti ini 
 
 ```
-curl --location --request GET 'localhost:8080/api/transaksi/' \
---header 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiYmVsYWphciJdLCJ1c2VyX25hbWUiOiJ1c2VyMDAxIiwic2NvcGUiOlsicmVhZCIsIndyaXRlIiwiYWRtaW4iXSwiZXhwIjoxNTg5Mzg1OTIyLCJhdXRob3JpdGllcyI6WyJWSUVXX1RSQU5TQUtTSSJdLCJqdGkiOiIzZDY2MzU0ZS02NGM1LTQxZTItYTc5MC00YWI4MjFiYWVhNWIiLCJjbGllbnRfaWQiOiJtb2JpbGVhcHAifQ.WWVOD9ivEf1nRZgSZ3uIWQBrTGfgsufgG28ZOLWQwW2h8wV_4z3JdJp87lsAkSoNYXD1xko1dwjSe0tz1Uw5ex9u12o4uwECn0ofkzZGi3q7jDd6pD3ypHBCyr1J-kbNF4EWIUVvefz2LElN96AbMtuHUChJmEFAJND2rljMDXZTm1cz-nnXcVkXumqXjDuRWYOFTZgQ4jhE-DrxU2cvIq87CqBVO12zGeGsOOHXi6j9OKhVUVCbxRymU1e8WLFPxEj_f7Fn_EynEksrask2GTw7GghFL5WGalHI_3lGOp9PgA7dJnd1pKWFxZspQj78EqwO8cZTAETZLeBtcL5mFg' \
---header 'Cookie: JSESSIONID=EDDF43C76EDFCB75EDFED4A778282434'
+curl -X GET \
+  'http://localhost:8080/api/transaksi/' \
+  --header 'Accept: application/json' \
+  --header 'Authorization: Bearer eyJraWQiOiJmOGM3M2VmMS0yODE4LTRhODEtOTIyOC1kM2EwYjYyNzRjMjQiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ1c2VyMDAyIiwiYXVkIjoic3BhLWNsaWVudCIsIm5iZiI6MTY3ODQ1Mjg4MCwic2NvcGUiOlsib3BlbmlkIl0sImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MCIsImV4cCI6MTY3ODQ1MzE4MCwiaWF0IjoxNjc4NDUyODgwfQ.deMwZjdVzVdwyTqyFBCJG6Mwm4WttXAIWvfQYtrq7bKtUzmH0GBuQ3kzGt-_KlhXyxWO9p1YbC0f0nQJsjtOGRcoQj1BNvzoC_pgCYGq-1Vj5DSY1uS6DiEazFJ4TRJS85sfx4BH6fqAgGUo2EgBnbbpyCA9Y-HKUS9bdlj6v90IBpch6_pmWLMKXbS_7Tic8qbihAikiDu1Z5VmposQpC4N6DXBinuKsm7Khk6TOo862BSx97UKd9CdxrOXTZZfgk2GuI09kyVmzkK7M7x4y7_OL_HMDoQA5fTLw6iI6XLzSc04ud9UKaJnkfpXv40BcXmSPxBCCv_AtDR6SupiRQ'
 ```
 
 Hasilnya seperti ini
@@ -118,23 +116,25 @@ Hasilnya seperti ini
 `access_token` ada masa berlakunya, defaultnya adalah `43199` detik atau `12` jam. Bila habis, kita bisa perbarui menggunakan `refresh_token` sebagai berikut:
 
 ```
-curl --location --request POST 'http://localhost:8080/oauth/token' \
---header 'Authorization: Basic bW9iaWxlYXBwOmFiY2Q=' \
---header 'Content-Type: application/x-www-form-urlencoded' \
---header 'Cookie: JSESSIONID=EDDF43C76EDFCB75EDFED4A778282434' \
---data-urlencode 'grant_type=refresh_token' \
---data-urlencode 'refresh_token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiYmVsYWphciJdLCJ1c2VyX25hbWUiOiJ1c2VyMDAxIiwic2NvcGUiOlsicmVhZCIsIndyaXRlIiwiYWRtaW4iXSwiYXRpIjoiM2Q2NjM1NGUtNjRjNS00MWUyLWE3OTAtNGFiODIxYmFlYTViIiwiZXhwIjoxNTkxOTM0NzIyLCJhdXRob3JpdGllcyI6WyJWSUVXX1RSQU5TQUtTSSJdLCJqdGkiOiI3ODFiNmY3ZC1iM2JhLTQyNTItODI5Ny05MTUwOGRlNWM2YmUiLCJjbGllbnRfaWQiOiJtb2JpbGVhcHAifQ.YAX3vRbGdiHM0HcG9itISGJ1XxmEmzUJsYh5-BIuBfVoYTu28F0f6JN3qGvfmPr2hZzAjhG8wQthwgtwmQXbpLTeWNIVW_v9EAme3feUy83h1Kd8kChg-837H5VfdSHOUulG6QuK_Yp9kD_6UjIASvaHvJsQXtnJy-gcBqofZpth67KGmWihOaHiiYdWoFgEN495tK2FrnERMz0JGDT79lzZUlK2gWcN9_-rcS8wBKPK2zpPm0F25k9mgEtEXznsjwRv12CCdMakNEvOYoUjkgrjq0A7FSWG7JASb2GZjggDRpXTSYd0tzWrGGvm67o-N78myQhKu7VXY5qeZup3fA'
+curl -X POST \
+  'http://localhost:8080/oauth2/token' \
+  --header 'Accept: */*' \
+  --header 'User-Agent: Thunder Client (https://www.thunderclient.com)' \
+  --header 'Authorization: Basic c3BhLWNsaWVudDphYmNk' \
+  --header 'Content-Type: application/x-www-form-urlencoded' \
+  --data-urlencode 'grant_type=refresh_token' \
+  --data-urlencode 'refresh_token=GTBYbXFJIx-fg5HUFRZdXBLwax79fBdBf5hAP_7VWLYQjeXCOq9z9ESU_pAFKrYctZb0KVizjuqZ9-gDGwSK8fynN0FmMse8cD2tyV1v6zXxvyRIcu1Cb8JaT8ZYD6x2'
 ```
 
 Hasilnya sebagai berikut
 
-```
+```json
 {
-  "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiYmVsYWphciJdLCJ1c2VyX25hbWUiOiJ1c2VyMDAxIiwic2NvcGUiOlsicmVhZCIsIndyaXRlIiwiYWRtaW4iXSwiZXhwIjoxNTg5Mzg5MjY5LCJhdXRob3JpdGllcyI6WyJWSUVXX1RSQU5TQUtTSSJdLCJqdGkiOiJmZDdiNjJhMy01ZDU1LTQ4YzctOTYyMi1mYzQzNThjYjhhN2EiLCJjbGllbnRfaWQiOiJtb2JpbGVhcHAifQ.AIUhQAgSB_aPk6a16S9GpqK599QjSsbq9H0u_9sUKpcU8OOxqfm9ftv1kjy8Z6YmzaoJbgQtWQZ9p9EYU4Z8Q2yrJIPY7DG3eKw3ERDt4se_PRznf8Flr-8thW4GW_9swiFToTTgQJADlCb1Lnj1yTS6STpLrJqWnSnVSik9nmV8TZ6BN-nvikhIB0Ll0Cka50UW-69v4d0CZgJpOyVUwOKwOuhmm8iS43vG8kk50pjg-lTdI5JcHy3tv6u0AhT66Wyn4XXgTMA2iHfqPq8Ub3oWn36mUQHqWxfwLkuKK3xqKQTTF9VnwMJLxZs2-utn1u4xlOcQ71OORSafqj2xJQ",
-  "token_type": "bearer",
-  "refresh_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiYmVsYWphciJdLCJ1c2VyX25hbWUiOiJ1c2VyMDAxIiwic2NvcGUiOlsicmVhZCIsIndyaXRlIiwiYWRtaW4iXSwiYXRpIjoiZmQ3YjYyYTMtNWQ1NS00OGM3LTk2MjItZmM0MzU4Y2I4YTdhIiwiZXhwIjoxNTkxOTM4MDU1LCJhdXRob3JpdGllcyI6WyJWSUVXX1RSQU5TQUtTSSJdLCJqdGkiOiJjNWI3MTg0Mi1jNjkzLTRiMWQtYjY4ZC01MmZiMzczYzZjYWEiLCJjbGllbnRfaWQiOiJtb2JpbGVhcHAifQ.KpvSL3dqM_s30ZDcrbsGw7bBZsqY85cXMubB76ACrS-jxn52yahDgVULu0xP52vPrIR-x3vNFs8Mt7uBhdQnfd40JTOQth-hCkPrC6bvgApt1w9GODuOWlExRJThWjE4kjLWnFV7SSkJGzZVKcnPHujoJV45upOL39K7bFZaFAV9CIs3v7GDYPGMoIRTssukZqtUVBPdcIWjjW3ZM6wnwsibp28eD-0ARzFBvlbG0tWBx0rmFE9pBUU2QbiATaFdh_Eedztv2-ih27QDj-3g-OOKqwM-U91lz--hcBMw94Z3SWvTmxEqqujQCpN5cVCCFNawQcQDS4n4s6-zIqc5jA",
-  "expires_in": 43199,
-  "scope": "read write admin",
-  "jti": "fd7b62a3-5d55-48c7-9622-fc4358cb8a7a"
+  "access_token": "eyJraWQiOiI3YTE3MWY2My1lZGZmLTQ0ZTMtYmM3ZS1jOTNkZDk4MjVmMmEiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ1c2VyMDAxIiwiYXVkIjoic3BhLWNsaWVudCIsIm5iZiI6MTY3ODQ1MzE4NCwic2NvcGUiOlsib3BlbmlkIl0sImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MCIsImV4cCI6MTY3ODQ1MzQ4NCwiaWF0IjoxNjc4NDUzMTg0fQ.UK4qvyohhqWfGHUW4crXrosp-bbb3pzo16cLO8vYYeoS44x-PQIMP4kwl_THGzdSI9w5uFB5rpmxYQeLAKi62WEXGbgpRJaqhD77EDNN0CI6eu9H111sZR5ZjYmrXL2Jtjo4omjL9m-y3VFHUJXVLjz_SFwJaLXPd1ivPXb7P6dC0JDlTOXwuGkEIWBiJAJuymvRvHh9LWth-lZEK9dmQYtvh3h9XcauuNNGK3hWd_rwaV83yMT57wQm1QpSSXLOxHJ3YP8wd9W3foQ8IvKkPjW_qMyBwAvtm_YO_mUIqsjB4kxoFQ5sRxULZc2WHSEiUtWQ9sDGBef1PSsRuFuzwA",
+  "refresh_token": "GTBYbXFJIx-fg5HUFRZdXBLwax79fBdBf5hAP_7VWLYQjeXCOq9z9ESU_pAFKrYctZb0KVizjuqZ9-gDGwSK8fynN0FmMse8cD2tyV1v6zXxvyRIcu1Cb8JaT8ZYD6x2",
+  "scope": "openid",
+  "id_token": "eyJraWQiOiI3YTE3MWY2My1lZGZmLTQ0ZTMtYmM3ZS1jOTNkZDk4MjVmMmEiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ1c2VyMDAxIiwiYXVkIjoic3BhLWNsaWVudCIsImF6cCI6InNwYS1jbGllbnQiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAiLCJleHAiOjE2Nzg0NTQ5ODQsImlhdCI6MTY3ODQ1MzE4NH0.TMQE31yeB1MDHLiihW_5YxZVWwM4PGtKPm_QWflQoNx88lN9b6avKzC2UH2438o4gcTr5GtDTzCTCi5q3a_IpQdTv3gKOjj6WsZkSnH8zVN2rqhKeUgUMA2gC6sMKzn06IZY9LKvZWPLmUnvQA2pMsqap6oBtlabetcq7lqpByI9G9Q3nBgRAo82-7NiXEPe2ebjOVmKXg_iB-i22Pvb1j-8mpS4w3OG2Hh3N3CaPQHZ5Y8m5G9yqzBVMCHZ9rGn90cf3bQ2A89365SNmxL_3YBlahsK7njhSWoFNneMW3dEgzsSSWoq7QGoRy-XqCqLX7YpA5zyiL-jLASEWLOZEg",
+  "token_type": "Bearer",
+  "expires_in": 299
 }
 ```

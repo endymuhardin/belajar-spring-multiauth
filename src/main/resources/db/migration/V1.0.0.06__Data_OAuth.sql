@@ -10,7 +10,7 @@ insert into oauth2_registered_client (
     token_settings
 ) values (
     '432f7b10-c3cd-4084-ac19-9ee068a7b435','spa-client', '2023-03-10 13:41:12.558667', '$2y$10$QmpDqxEmx0vdnZuvS8R3U.lCvLjwFGK44IFrbveDesIhgtvegC4im', null, 
-    'spa-client', 'client_secret_basic', 'refresh_token,client_credentials,authorization_code',
+    'spa-client', 'client_secret_basic', 'authorization_code,refresh_token',
     'http://127.0.0.1:10000/login/oauth2/code/messaging-client-oidc,http://127.0.0.1:10000/authorized',
     'openid,profile,message.read,message.write', 
     '{"@class":"java.util.Collections$UnmodifiableMap","settings.client.require-proof-key":true,"settings.client.require-authorization-consent":true}',
