@@ -17,17 +17,17 @@ create table s_users (
 
 create table s_users_passwords (
     id_user  varchar(36),
-    password varchar(255) not null,
+    user_password varchar(255) not null,
     primary key (id_user),
     foreign key (id_user) references s_users (id)
 );
 
 create table s_permissions (
     id    varchar(36),
-    label varchar(100) not null,
-    value varchar(100) not null,
+    permission_label varchar(100) not null,
+    permission_value varchar(100) not null,
     primary key (id),
-    unique (value)
+    unique (permission_value)
 );
 
 create table s_roles_permissions (

@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.2.7.RELEASE</version>
+		<version>3.0.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.muhardin.endy.belajar.spring.security.multiauth</groupId>
@@ -15,10 +15,16 @@
 	<description>Belajar Multiple Authentication</description>
 
 	<properties>
-		<java.version>1.8</java.version>
+		<java.version>17</java.version>
+		<spring-authorization-server.version>1.0.1</spring-authorization-server.version>
+		<spring-security-cas.version>5.8.2</spring-security-cas.version>
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -36,27 +42,18 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.security.oauth.boot</groupId>
-			<artifactId>spring-security-oauth2-autoconfigure</artifactId>
-			<version>2.2.6.RELEASE</version>
-		</dependency>
-		<dependency>
-			<groupId>com.nimbusds</groupId>
-			<artifactId>nimbus-jose-jwt</artifactId>
-			<version>8.16</version>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-oauth2-resource-server</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-oauth2-jose</artifactId>
+			<artifactId>spring-security-oauth2-authorization-server</artifactId>
+			<version>${spring-authorization-server.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.nimbusds</groupId>
-			<artifactId>oauth2-oidc-sdk</artifactId>
-			<version>6.14</version>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-cas</artifactId>
+			<version>${spring-security-cas.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.flywaydb</groupId>

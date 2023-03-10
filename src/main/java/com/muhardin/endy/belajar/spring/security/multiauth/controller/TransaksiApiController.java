@@ -34,7 +34,7 @@ public class TransaksiApiController {
             username = ((OAuth2AuthenticatedPrincipal) currentUser.getPrincipal())
                     .getAttribute("user_name");
         } else if (Jwt.class.isAssignableFrom(currentUser.getPrincipal().getClass())) {
-            username = ((Jwt) currentUser.getPrincipal()).getClaim("user_name");
+            username = ((Jwt) currentUser.getPrincipal()).getClaim("sub");
         } else {
             throw new IllegalStateException("Cannot get username");
         }

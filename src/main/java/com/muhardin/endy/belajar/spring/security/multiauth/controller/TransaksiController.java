@@ -1,6 +1,5 @@
 package com.muhardin.endy.belajar.spring.security.multiauth.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.muhardin.endy.belajar.spring.security.multiauth.dao.PenggunaDao;
 import com.muhardin.endy.belajar.spring.security.multiauth.dao.TransaksiDao;

@@ -13,8 +13,7 @@ Dengan demikian, kita harus menyediakan beberapa proteksi security, yaitu:
 
 1. Daftar transaksi user (web-based) : [http://localhost:8080/transaksi/list](http://localhost:8080/transaksi/list). Untuk mengakses halaman ini, harus login dulu. 
 2. API data transaksi user (REST) : [http://localhost:8080/api/transaksi/](http://localhost:8080/api/transaksi/). Untuk mengakses halaman ini, harus menggunakan Bearer Token.
-3. API untuk login OAuth 2 dengan Resource Owner Password : `http://localhost:8080/oauth/token`. Cara loginnya ada di bawah.
-
+3. 
 
 ## Daftar credential untuk mengakses aplikasi ##
 
@@ -29,19 +28,25 @@ Dengan demikian, kita harus menyediakan beberapa proteksi security, yaitu:
     * Client ID : `clientspamobile`, client secret : `abcd`, grant type : `implicit`
     * Client ID : `mobileapp`, client secret : `abcd`, grant type : `password,refresh_token`
 
-## Login dengan Resource Owner Password ##
+## Mendapatkan Access Token dengan Grant Type Authorization Code PKCE ##
+
+http://localhost:8080/oauth2/authorize?client_id=spa-client&redirect_uri=http://127.0.0.1:10000/authorized&response_type=code&scope=openid&state=abcd1234&code_challenge_method=S256&code_challenge=ea3rEXbTCcvWGOL2m6J1lT2VWv-sLrnS2i-UeaNENbw
 
 Lakukan HTTP request untuk mendapatkan `access_token`
 
 ```
-curl --location --request POST 'http://localhost:8080/oauth/token' \
---header 'Authorization: Basic bW9iaWxlYXBwOmFiY2Q=' \
---header 'Content-Type: application/x-www-form-urlencoded' \
---data-urlencode 'grant_type=password' \
---data-urlencode 'username=user001' \
---data-urlencode 'password=teststaff'
+curl -X POST \
+  'http://localhost:8080/oauth2/token' \
+  --header 'Accept: application/json' \
+  --header 'Authorization: Basic c3BhLWNsaWVudDphYmNk' \
+  --header 'Content-Type: application/x-www-form-urlencoded' \
+  --data-urlencode 'client_id=spa-client' \
+  --data-urlencode 'redirect_uri=http://127.0.0.1:10000/authorized' \
+  --data-urlencode 'grant_type=authorization_code' \
+  --data-urlencode 'code=s2QnpXbI7y2TB89HKK_s52Vm9d0r_XYd_OCPr7_sqvq4i0zApwDSK8g44JZaWoZjUiOAowaXHwknBah133cVmF9ng5noqibE45lAFo3ruKYTwxiDr32K81jzB6z3JyRr' \
+  --data-urlencode 'code_verifier=EmJ1jTS245HXMu5dDFc36XlEK02FCfT3BAvbvVfBiXSl'
 ```
-   
+
 Login yang sukses akan menghasilkan response seperti ini
     
 ```json

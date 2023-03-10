@@ -1,110 +1,109 @@
 package com.muhardin.endy.belajar.spring.security.multiauth.config;
 
-import com.nimbusds.jose.jwk.JWKSet;
-import com.nimbusds.jose.jwk.RSAKey;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+import java.util.UUID;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
-import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
-import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerEndpointsConfiguration;
-import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerSecurityConfiguration;
-import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
-import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
-import org.springframework.security.oauth2.provider.endpoint.FrameworkEndpoint;
-import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
-import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationConsentService;
+import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
+import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 
-import javax.sql.DataSource;
-import java.security.KeyPair;
-import java.security.Principal;
-import java.security.interfaces.RSAPublicKey;
-import java.util.Map;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.proc.SecurityContext;
 
-@Import(AuthorizationServerEndpointsConfiguration.class)
 @Configuration
-public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
+public class AuthServerConfig {
+    
+    @Bean
+	@Order(2)
+	public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
+		OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
+		http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
+				.oidc(Customizer.withDefaults());
 
-    @Autowired
-    private KeyPair keyPair;
+		http
+			.exceptionHandling(exceptions ->
+				exceptions.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
+			)
+			.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
 
-    @Autowired
-    @Qualifier("authenticationManagerBean")
-    private AuthenticationManager authenticationManager;
+		return http.build();
+	}
 
-    @Autowired
-    private DataSource dataSource;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private UserDetailsService userDetailsService;
-
-    @Override
-    public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients
-                .jdbc(this.dataSource)
-                .passwordEncoder(passwordEncoder);
-    }
-
-    @Override
-    public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
-        security.checkTokenAccess("permitAll()")
-                .tokenKeyAccess("permitAll()");
-    }
+    @Bean 
+	public RegisteredClientRepository registeredClientRepository(JdbcTemplate jdbcTemplate) {
+		JdbcRegisteredClientRepository registeredClientRepository = new JdbcRegisteredClientRepository(jdbcTemplate);
+		return registeredClientRepository;
+	}
 
     @Bean
-    public JwtAccessTokenConverter jwtTokenConverter() {
-        JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-        converter.setKeyPair(keyPair);
-        return converter;
-    }
+	public OAuth2AuthorizationService authorizationService(JdbcTemplate jdbcTemplate, RegisteredClientRepository registeredClientRepository) {
+		return new JdbcOAuth2AuthorizationService(jdbcTemplate, registeredClientRepository);
+	}
 
-    @Override
-    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints.tokenStore(new JdbcTokenStore(dataSource))
-                .accessTokenConverter(jwtTokenConverter())
-                .authenticationManager(this.authenticationManager)
-        .userDetailsService(userDetailsService);
-    }
-}
+	@Bean
+	public OAuth2AuthorizationConsentService authorizationConsentService(JdbcTemplate jdbcTemplate, RegisteredClientRepository registeredClientRepository) {
+		return new JdbcOAuth2AuthorizationConsentService(jdbcTemplate, registeredClientRepository);
+	}
 
-@FrameworkEndpoint
-class JwkSetEndpoint {
-    KeyPair keyPair;
+	@Bean
+	public JWKSource<SecurityContext> jwkSource() {
+		RSAKey rsaKey = generateRsa();
+		JWKSet jwkSet = new JWKSet(rsaKey);
+		return (jwkSelector, securityContext) -> jwkSelector.select(jwkSet);
+	}
 
-    public JwkSetEndpoint(KeyPair keyPair) {
-        this.keyPair = keyPair;
-    }
+	@Bean
+	public JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource) {
+		return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
+	}
 
-    @GetMapping("/.well-known/jwks.json")
-    @ResponseBody
-    public Map<String, Object> getKey(Principal principal) {
-        RSAPublicKey publicKey = (RSAPublicKey) this.keyPair.getPublic();
-        RSAKey key = new RSAKey.Builder(publicKey).build();
-        return new JWKSet(key).toJSONObject();
-    }
-}
+	@Bean
+	public AuthorizationServerSettings authorizationServerSettings() {
+		return AuthorizationServerSettings.builder().build();
+	}
 
-@Configuration
-@Order(-1)
-class JwkSetEndpointConfiguration extends AuthorizationServerSecurityConfiguration {
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        super.configure(http);
-        http
-                .requestMatchers()
-                .mvcMatchers("/.well-known/jwks.json")
-                .and()
-                .authorizeRequests()
-                .mvcMatchers("/.well-known/jwks.json").permitAll();
-    }
+    private static RSAKey generateRsa() {
+		KeyPair keyPair = generateRsaKey();
+		RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
+		RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
+
+		return new RSAKey.Builder(publicKey)
+				.privateKey(privateKey)
+				.keyID(UUID.randomUUID().toString())
+				.build();
+
+	}
+
+    private static KeyPair generateRsaKey() {
+		KeyPair keyPair;
+		try {
+			KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+			keyPairGenerator.initialize(2048);
+			keyPair = keyPairGenerator.generateKeyPair();
+		} catch (Exception ex) {
+			throw new IllegalStateException(ex);
+		}
+		return keyPair;
+	}
 }
